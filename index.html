@@ -179,8 +179,8 @@
             gap: 0.8rem;
         }
 
-        .nav-logo svg { width: 56px; height: 56px; transition: transform 0.4s; }
-        .nav-logo:hover svg { transform: rotate(-5deg) scale(1.05); }
+        .nav-logo-img { width: 56px; height: 56px; transition: transform 0.4s; object-fit: contain; }
+        .nav-logo:hover .nav-logo-img { transform: rotate(-5deg) scale(1.05); }
 
         .nav-logo-text {
             font-family: 'Fraunces', serif;
@@ -370,6 +370,12 @@
             margin: 0 auto 2rem;
             opacity: 0;
             animation: fadeUp 1s 0.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .hero-logo-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         @keyframes fadeUp {
@@ -1147,7 +1153,7 @@
 
             .nav-cta { display: none; }
             nav.scrolled { padding: 0.8rem 0; }
-            .nav-logo svg { width: 44px; height: 44px; }
+            .nav-logo-img { width: 44px; height: 44px; }
             .nav-logo-text { font-size: 1.15rem; }
             .lang-btn { padding: 0.35rem 0.8rem; font-size: 0.7rem; }
             .hamburger span { width: 20px; }
@@ -1243,33 +1249,7 @@
     <nav id="navbar" class="scrolled">
         <div class="nav-inner">
             <a href="#" class="nav-logo hoverable">
-                <!-- LOGO: Globe + hands + heart — blue flame/marigold -->
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#64B5F6"/>
-                            <stop offset="100%" stop-color="#D4A540"/>
-                        </linearGradient>
-                        <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#D4A540"/>
-                            <stop offset="100%" stop-color="#64B5F6"/>
-                        </linearGradient>
-                    </defs>
-                    <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-                    <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                    <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                    <line x1="26" y1="18" x2="21" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-                    <line x1="74" y1="18" x2="79" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-                    <circle cx="50" cy="40" r="26" fill="none" stroke="url(#lg1)" stroke-width="2.2"/>
-                    <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity="0.45"/>
-                    <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity="0.45"/>
-                    <path d="M24 40 Q50 50 76 40" fill="none" stroke="url(#lg1)" stroke-width="1" opacity="0.25"/>
-                    <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.7"/>
-                    <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#lg2)" stroke-width="2.8" stroke-linecap="round"/>
-                    <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#lg2)" stroke-width="2.8" stroke-linecap="round"/>
-                    <path d="M14 58 C12 56 13 52 17 53" fill="none" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-                    <path d="M86 58 C88 56 87 52 83 53" fill="none" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-                </svg>
+                <img src="images/logo.png" alt="Go Serve Global Logo" class="nav-logo-img">
                 <span class="nav-logo-text">Go Serve Global</span>
             </a>
             <ul class="nav-links">
@@ -1312,32 +1292,7 @@
 
         <div class="hero-content" data-parallax="-0.01">
             <div class="hero-logo-mark">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="hlg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#64B5F6"/>
-                            <stop offset="100%" stop-color="#D4A540"/>
-                        </linearGradient>
-                        <linearGradient id="hlg2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#D4A540"/>
-                            <stop offset="100%" stop-color="#64B5F6"/>
-                        </linearGradient>
-                    </defs>
-                    <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-                    <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                    <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                    <line x1="26" y1="18" x2="21" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-                    <line x1="74" y1="18" x2="79" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
-                    <circle cx="50" cy="40" r="26" fill="none" stroke="url(#hlg1)" stroke-width="1.8"/>
-                    <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#hlg1)" stroke-width="1" opacity="0.4"/>
-                    <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#hlg1)" stroke-width="1" opacity="0.4"/>
-                    <path d="M24 40 Q50 50 76 40" fill="none" stroke="url(#hlg1)" stroke-width="0.8" opacity="0.2"/>
-                    <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.65"/>
-                    <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#hlg2)" stroke-width="2.5" stroke-linecap="round"/>
-                    <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#hlg2)" stroke-width="2.5" stroke-linecap="round"/>
-                    <path d="M14 58 C12 56 13 52 17 53" fill="none" stroke="url(#hlg2)" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
-                    <path d="M86 58 C88 56 87 52 83 53" fill="none" stroke="url(#hlg2)" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
-                </svg>
+                <img src="images/logo.png" alt="Go Serve Global Logo">
             </div>
 
             <h1 class="hero-title" id="heroTitle">
@@ -1574,25 +1529,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="#" class="nav-logo hoverable">
-                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
-                            <defs>
-                                <linearGradient id="flg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#64B5F6"/><stop offset="100%" stop-color="#D4A540"/>
-                                </linearGradient>
-                                <linearGradient id="flg2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#D4A540"/><stop offset="100%" stop-color="#64B5F6"/>
-                                </linearGradient>
-                            </defs>
-                            <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-                            <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                            <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-                            <circle cx="50" cy="40" r="26" fill="none" stroke="url(#flg1)" stroke-width="2.2"/>
-                            <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#flg1)" stroke-width="1.2" opacity="0.45"/>
-                            <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#flg1)" stroke-width="1.2" opacity="0.45"/>
-                            <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.65"/>
-                            <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#flg2)" stroke-width="2.8" stroke-linecap="round"/>
-                            <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#flg2)" stroke-width="2.8" stroke-linecap="round"/>
-                        </svg>
+                        <img src="images/logo.png" alt="Go Serve Global Logo" class="nav-logo-img">
                         <span class="nav-logo-text">Go Serve Global</span>
                     </a>
                     <p class="footer-desc" data-i="f_desc">A faith-based non-profit devoted to transforming communities through the boundless power of love.</p>

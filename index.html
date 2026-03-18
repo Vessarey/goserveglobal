@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Serve Global | Faith, Love & Hope</title>
+    <meta name="description" content="Go Serve Global — A non-profit devoted to faith, love, and hope. Founded by Leticia Bravo.">
+    <meta name="theme-color" content="#FAF2E6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --rosa: #B7522A;
+            --rosa-soft: #CC7B5A;
+            --rosa-pale: #FFF2EB;
+            --marigold: #D4A540;
+            --marigold-bright: #E8BD5C;
+            --marigold-pale: #FFF8E3;
+            --teal: #1B4B6E;
+            --teal-light: #2D6A94;
+            --teal-pale: #E8F0F6;
+            --terracotta: #A0522D;
+            --cream: #FAF2E6;
+            --sand: #FFF4DE;
+            --cocoa: #1E1B18;
+            --cocoa-warm: #353230;
+            --muted: #8A7E74;
+            --bone: #FEFBF5;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--cocoa);
+            background: var(--bone);
+            overflow-x: hidden;
+            line-height: 1.7;
+            cursor: none;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Fraunces', serif;
+            line-height: 1.1;
+            font-weight: 400;
+        }
+
+        a { text-decoration: none; color: inherit; cursor: none; }
+        button { font-family: inherit; cursor: none; border: none; background: none; }
+
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--rosa);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, opacity 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-aura {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid rgba(183, 82, 42, 0.35);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-color 0.3s,
+                        background 0.3s;
+        }
+
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
+            background: rgba(183, 82, 42, 0.12);
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hover + .cursor-aura {
+            width: 70px;
+            height: 70px;
+            border-color: rgba(183, 82, 42, 0.2);
+        }
+
+        /* ===== JOURNEY PROGRESS LINE ===== */
+        .journey-line {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 30vh;
+            background: rgba(30, 27, 24, 0.06);
+            z-index: 100;
+            border-radius: 3px;
+        }
+
+        .journey-fill {
+            width: 100%;
+            background: linear-gradient(to bottom, var(--marigold), var(--rosa));
+            border-radius: 3px;
+            height: 0%;
+            transition: height 0.1s linear;
+        }
+
+        .journey-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 2px solid rgba(30, 27, 24, 0.12);
+            background: var(--bone);
+            transition: all 0.4s;
+        }
+
+        .journey-dot.active {
+            border-color: var(--rosa);
+            background: var(--rosa);
+            box-shadow: 0 0 14px rgba(183, 82, 42, 0.5);
+        }
+
+        /* ===== GRAIN ===== */
+        .grain::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 0;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        nav.scrolled {
+            background: rgba(254, 251, 245, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 1px 0 rgba(30, 27, 24, 0.04);
+            padding: 1rem 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 3rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .nav-logo svg { width: 56px; height: 56px; transition: transform 0.4s; }
+        .nav-logo:hover svg { transform: rotate(-5deg) scale(1.05); }
+
+        .nav-logo-text {
+            font-family: 'Fraunces', serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--cocoa);
+            transition: color 0.4s;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--rosa);
+            border-radius: 2px;
+            transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .nav-links a:hover { color: var(--cocoa); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .lang-toggle {
+            display: flex;
+            background: rgba(30, 27, 24, 0.04);
+            border-radius: 100px;
+            padding: 3px;
+        }
+
+        .lang-btn {
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--rosa);
+            color: #fff !important;
+            box-shadow: 0 2px 12px rgba(183, 82, 42, 0.3);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.8rem;
+            background: var(--marigold);
+            color: #fff;
+            border: none;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 2px 12px rgba(212, 165, 64, 0.25);
+        }
+
+        .nav-cta:hover {
+            background: var(--rosa);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(183, 82, 42, 0.3);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1001;
+            padding: 10px;
+            margin: -10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--cocoa);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+
+        /* ===== HERO — BRIGHT & WARM ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--cream);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: -50px;
+            background:
+                radial-gradient(ellipse at 15% 30%, rgba(183, 82, 42, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(212, 165, 64, 0.15) 0%, transparent 45%),
+                radial-gradient(ellipse at 55% 80%, rgba(27, 75, 110, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 70%, rgba(160, 82, 45, 0.06) 0%, transparent 40%);
+            will-change: transform;
+            transition: transform 0.15s ease-out;
+        }
+
+        /* Decorative floating shapes — Mexican-inspired geometric */
+        .hero-shape {
+            position: absolute;
+            will-change: transform;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape-1 {
+            width: 350px;
+            height: 350px;
+            top: 5%;
+            right: -2%;
+            background: linear-gradient(135deg, rgba(212, 165, 64, 0.2) 0%, rgba(232, 189, 92, 0.08) 100%);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: floatBlob 12s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 2%;
+            background: linear-gradient(135deg, rgba(183, 82, 42, 0.18) 0%, rgba(204, 123, 90, 0.07) 100%);
+            border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+            animation: floatBlob 10s ease-in-out infinite reverse;
+        }
+
+        .shape-3 {
+            width: 180px;
+            height: 180px;
+            top: 42%;
+            left: 10%;
+            background: linear-gradient(135deg, rgba(27, 75, 110, 0.14) 0%, rgba(27, 75, 110, 0.03) 100%);
+            border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%;
+            animation: floatBlob 14s ease-in-out infinite;
+        }
+
+        @keyframes floatBlob {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(15px, -20px) rotate(3deg); }
+            66% { transform: translate(-10px, 12px) rotate(-2deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        .hero-logo-mark {
+            width: 170px;
+            height: 170px;
+            margin: 0 auto 2rem;
+            opacity: 0;
+            animation: fadeUp 1s 0.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-size: clamp(3.5rem, 9vw, 8rem);
+            color: var(--cocoa);
+            margin-bottom: 0.15em;
+            letter-spacing: -0.03em;
+            font-weight: 300;
+            line-height: 0.95;
+            overflow: hidden;
+        }
+
+        .hero-title .line { display: block; overflow: hidden; padding: 0.15em 0; margin: -0.15em 0; }
+
+        .hero-title .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            animation: charReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes charReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title .line:nth-child(2) .char {
+            background: linear-gradient(135deg, var(--rosa) 0%, var(--marigold) 60%, var(--terracotta) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--muted);
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeUp 1s 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s 1.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .btn-magnetic { position: relative; display: inline-block; }
+
+        .btn-fill {
+            display: inline-block;
+            padding: 1.1rem 3rem;
+            background: var(--rosa);
+            color: #fff;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 4px 25px rgba(183, 82, 42, 0.3);
+            will-change: transform;
+        }
+
+        .btn-fill:hover {
+            background: var(--marigold);
+            box-shadow: 0 8px 40px rgba(212, 165, 64, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            display: inline-block;
+            padding: 1.1rem 3rem;
+            border: 2px solid var(--teal);
+            color: var(--teal);
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .btn-ghost:hover {
+            background: var(--teal);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(27, 75, 110, 0.3);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            opacity: 0;
+            animation: fadeUp 1s 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .scroll-mouse {
+            width: 24px;
+            height: 38px;
+            border: 2px solid var(--rosa-soft);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .scroll-mouse::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 8px;
+            background: var(--rosa);
+            border-radius: 3px;
+            animation: scrollWheel 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollWheel {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            60% { transform: translateX(-50%) translateY(12px); opacity: 0; }
+            61% { transform: translateX(-50%) translateY(-4px); opacity: 0; }
+        }
+
+        .scroll-hint span {
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ===== REVEAL SYSTEM ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.vis { opacity: 1; transform: translateY(0); }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal-left.vis { opacity: 1; transform: translateX(0); }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal-right.vis { opacity: 1; transform: translateX(0); }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.35s; }
+        .stagger-4 { transition-delay: 0.5s; }
+
+        /* ===== PAPEL PICADO DIVIDER ===== */
+        .papel-divider {
+            position: relative;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .papel-divider svg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== MISSION ===== */
+        .mission {
+            padding: 7rem 0;
+            background: var(--bone);
+            position: relative;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 3rem; }
+
+        .mission-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .mission-text { padding-top: 2rem; }
+
+        .eyebrow {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--rosa);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, var(--rosa), var(--marigold));
+            border-radius: 2px;
+        }
+
+        .section-heading {
+            font-size: clamp(2.5rem, 4.5vw, 3.8rem);
+            color: var(--cocoa);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.08;
+        }
+
+        .section-body {
+            font-size: 1.05rem;
+            color: var(--muted);
+            max-width: 550px;
+            line-height: 1.85;
+        }
+
+        /* Pillar cards — colorful left borders */
+        .pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .pillar-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.2rem 2.5rem;
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(30, 27, 24, 0.04);
+            transition: box-shadow 0.4s, transform 0.4s;
+            will-change: transform;
+            transform-style: preserve-3d;
+            border-left: 4px solid transparent;
+        }
+
+        .pillar-card:nth-child(1) { border-left-color: var(--rosa); }
+        .pillar-card:nth-child(2) { border-left-color: var(--marigold); }
+        .pillar-card:nth-child(3) { border-left-color: var(--teal); }
+
+        .pillar-card:hover {
+            box-shadow: 0 20px 60px rgba(30, 27, 24, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .pillar-num {
+            font-family: 'Fraunces', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            line-height: 1;
+            transition: color 0.4s;
+        }
+
+        .pillar-card:nth-child(1) .pillar-num { color: rgba(183, 82, 42, 0.15); }
+        .pillar-card:nth-child(2) .pillar-num { color: rgba(212, 165, 64, 0.15); }
+        .pillar-card:nth-child(3) .pillar-num { color: rgba(27, 75, 110, 0.15); }
+
+        .pillar-card:nth-child(1):hover .pillar-num { color: var(--rosa-soft); }
+        .pillar-card:nth-child(2):hover .pillar-num { color: var(--marigold-bright); }
+        .pillar-card:nth-child(3):hover .pillar-num { color: var(--teal-light); }
+
+        .pillar-card h3 {
+            font-size: 1.5rem;
+            color: var(--cocoa);
+            margin-bottom: 0.5rem;
+        }
+
+        .pillar-card p {
+            font-size: 0.92rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ===== PROJECT — TEAL BACKGROUND ===== */
+        .project {
+            padding: 7rem 0;
+            background: var(--teal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .project .eyebrow { color: var(--marigold-bright); }
+        .project .eyebrow::before { background: linear-gradient(to right, var(--marigold-bright), var(--marigold)); }
+        .project .section-heading { color: #fff; }
+        .project .section-body { color: rgba(255,255,255,0.65); margin-bottom: 3rem; }
+
+        .project-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .p-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 1.8rem;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(8px);
+        }
+
+        .p-card:hover {
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(232, 189, 92, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .p-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(232, 189, 92, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .p-card-icon svg { width: 22px; height: 22px; stroke: var(--marigold-bright); }
+
+        .p-card h4 { font-size: 1.15rem; color: #fff; margin-bottom: 0.4rem; }
+        .p-card p { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            will-change: transform;
+            transform-style: preserve-3d;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .photo-item:hover img { transform: scale(1.06); }
+
+        .photo-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 50%);
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .photo-item:hover::after { opacity: 0.5; }
+
+        .photo-hero { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+        .photo-half { aspect-ratio: 4 / 3; }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.2rem 1rem 0.8rem;
+            z-index: 2;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .photo-item:hover .photo-caption { opacity: 1; transform: translateY(0); }
+
+        .gallery-label {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding-top: 0.5rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* ===== ABOUT ===== */
+        .about {
+            padding: 7rem 0;
+            background: var(--bone);
+            position: relative;
+        }
+
+        .about-header {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 3rem;
+        }
+
+        .about-header .eyebrow { justify-content: center; }
+        .about-header .eyebrow::before { display: none; }
+
+        .about-header .section-heading {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 0;
+        }
+
+        .about-layout {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 3.5rem;
+            align-items: start;
+        }
+
+        .founder-photo-wrap {
+            position: sticky;
+            top: 7rem;
+        }
+
+        .founder-photo {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 50px rgba(30, 27, 24, 0.1);
+            position: relative;
+        }
+
+        .founder-photo img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .founder-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            border: 1px solid rgba(30, 27, 24, 0.06);
+            pointer-events: none;
+        }
+
+        /* Impact Stats */
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem 0 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-item:nth-child(1) .stat-number { color: var(--rosa); }
+        .stat-item:nth-child(2) .stat-number { color: var(--teal); }
+        .stat-item:nth-child(3) .stat-number { color: var(--marigold); }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* About body text */
+        .about-body-wrap {
+            text-align: left;
+        }
+
+        .about-body {
+            font-size: 1.05rem;
+            color: var(--muted);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-body:first-child::first-letter {
+            font-family: 'Fraunces', serif;
+            font-size: 3.2rem;
+            float: left;
+            line-height: 1;
+            padding-right: 0.6rem;
+            padding-top: 0.15rem;
+            color: var(--rosa);
+            font-weight: 600;
+        }
+
+        .about-text-2 {
+            font-size: 1.1rem;
+            color: var(--cocoa);
+            line-height: 1.85;
+            margin-top: 2rem;
+            padding: 2rem 2.5rem;
+            background: linear-gradient(135deg, var(--rosa-pale) 0%, var(--marigold-pale) 100%);
+            border-radius: 16px;
+            border-left: 4px solid var(--rosa);
+            text-align: left;
+            font-weight: 400;
+        }
+
+        /* ===== DONATE — WARM GRADIENT ===== */
+        .donate {
+            padding: 8rem 0;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(160deg, var(--sand) 0%, var(--rosa-pale) 50%, var(--marigold-pale) 100%);
+        }
+
+        .donate-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(183, 82, 42, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(212, 165, 64, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(27, 75, 110, 0.04) 0%, transparent 50%);
+        }
+
+        .donate-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .donate .eyebrow { justify-content: center; color: var(--rosa); }
+        .donate .eyebrow::before { display: none; }
+
+        .donate .section-heading {
+            color: var(--cocoa);
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .donate .section-body {
+            color: var(--muted);
+            max-width: 500px;
+            margin: 0 auto 3.5rem;
+            text-align: center;
+        }
+
+        .donate-main-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.3rem 3.5rem;
+            background: linear-gradient(135deg, var(--rosa) 0%, var(--marigold) 100%);
+            color: #fff;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow:
+                0 4px 30px rgba(183, 82, 42, 0.25),
+                0 0 60px rgba(212, 165, 64, 0.1);
+            will-change: transform;
+        }
+
+        .donate-main-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 8px 50px rgba(183, 82, 42, 0.35),
+                0 0 100px rgba(212, 165, 64, 0.15);
+        }
+
+        .donate-main-btn svg { width: 22px; height: 22px; }
+
+        .donate-note {
+            margin-top: 2rem;
+            font-size: 0.82rem;
+            color: var(--muted);
+            letter-spacing: 0.03em;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--cocoa);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .footer-brand .nav-logo { margin-bottom: 1.2rem; }
+        .footer-brand .nav-logo-text { color: #fff; }
+
+        .footer-desc {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            max-width: 320px;
+        }
+
+        .footer-col-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.15rem;
+            color: #fff;
+            margin-bottom: 1.3rem;
+        }
+
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+        .footer-links a { color: rgba(255,255,255,0.4); font-size: 0.88rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--marigold-bright); }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+        }
+
+        .footer-copy { color: rgba(255,255,255,0.2); font-size: 0.78rem; }
+
+        .footer-verse {
+            color: rgba(255,255,255,0.15);
+            font-size: 0.78rem;
+            font-style: italic;
+            font-family: 'Fraunces', serif;
+            max-width: 450px;
+            text-align: right;
+        }
+
+        /* ===== MOBILE NAV ===== */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 27, 24, 0.97);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .mobile-menu.open { opacity: 1; pointer-events: all; }
+
+        .mobile-menu a {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            color: #fff;
+            transition: color 0.3s;
+            font-weight: 300;
+        }
+
+        .mobile-menu a:hover { color: var(--marigold-bright); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 968px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .mobile-menu { display: flex; }
+            .cursor, .cursor-aura { display: none; }
+            body { cursor: auto; }
+            a, button { cursor: pointer; }
+            .journey-line { display: none; }
+
+            .mission { padding: 5rem 0; }
+            .mission-layout { grid-template-columns: 1fr; gap: 3rem; }
+            .mission-text { padding-top: 0; }
+            .section-body { max-width: 100%; }
+
+            .project { padding: 5rem 0; }
+            .project-layout { grid-template-columns: 1fr; gap: 3rem; }
+            .photo-gallery { order: -1; }
+
+            .about { padding: 5rem 0; }
+            .about-layout { grid-template-columns: 280px 1fr; gap: 2.5rem; }
+            .impact-stats { gap: 0.8rem; }
+
+            .donate { padding: 5rem 0; }
+
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .footer-brand { grid-column: 1 / -1; }
+            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+            .footer-verse { text-align: center; max-width: 100%; }
+
+            .container { padding: 0 1.5rem; }
+            .nav-inner { padding: 0 1.5rem; }
+
+            .hero-shape { opacity: 0.5; }
+
+            .pillar-card { padding: 1.8rem 2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .hero { min-height: 100svh; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-content { padding: 1.5rem; }
+            .hero-logo-mark { width: 120px; height: 120px; margin-bottom: 1.5rem; }
+            .hero-subtitle { font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 2rem; }
+            .hero-ctas { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .btn-fill, .btn-ghost { text-align: center; padding: 1rem 2rem; font-size: 0.85rem; width: 100%; }
+            .scroll-hint { bottom: 1.5rem; }
+            .hero-shape { display: none; }
+
+            .section-heading { font-size: 2rem; }
+            .eyebrow { font-size: 0.7rem; }
+
+            .nav-cta { display: none; }
+            nav.scrolled { padding: 0.8rem 0; }
+            .nav-logo svg { width: 44px; height: 44px; }
+            .nav-logo-text { font-size: 1.15rem; }
+            .lang-btn { padding: 0.35rem 0.8rem; font-size: 0.7rem; }
+            .hamburger span { width: 20px; }
+
+            .mission { padding: 3.5rem 0; }
+            .pillar-card { grid-template-columns: 40px 1fr; gap: 1rem; padding: 1.5rem; border-radius: 14px; }
+            .pillar-num { font-size: 2.2rem; }
+            .pillar-card h3 { font-size: 1.25rem; }
+            .pillar-card p { font-size: 0.88rem; }
+
+            .project { padding: 3.5rem 0; }
+            .project-cards { grid-template-columns: 1fr; gap: 1rem; }
+            .p-card { padding: 1.5rem; }
+            .photo-item { border-radius: 12px; }
+            .photo-hero { aspect-ratio: 3 / 2; }
+            .photo-caption { opacity: 1; transform: translateY(0); font-size: 0.75rem; }
+
+            .about { padding: 3.5rem 0; }
+            .about-header { margin-bottom: 2rem; }
+            .about .section-heading { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0; }
+            .about-layout { grid-template-columns: 1fr; gap: 2rem; }
+            .founder-photo-wrap { position: static; max-width: 280px; margin: 0 auto; }
+            .founder-photo { border-radius: 16px; }
+            .founder-photo::after { border-radius: 16px; }
+            .impact-stats { grid-template-columns: repeat(3, 1fr); gap: 0.8rem; padding: 1rem 0 0; }
+            .stat-number { font-size: 1.6rem; }
+            .stat-label { font-size: 0.65rem; letter-spacing: 0.06em; }
+            .about-body { font-size: 0.95rem; line-height: 1.8; }
+            .about-body:first-child::first-letter { font-size: 2.6rem; }
+            .about-text-2 { padding: 1.5rem; font-size: 0.95rem; border-radius: 12px; }
+
+            .donate { padding: 4rem 0; }
+            .donate .section-heading { font-size: clamp(2rem, 5vw, 3.5rem); }
+            .donate-main-btn { padding: 1.1rem 2.5rem; font-size: 0.95rem; }
+            .donate-note { font-size: 0.78rem; }
+
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-brand { grid-column: auto; }
+            footer { padding: 3rem 0 1.5rem; }
+            .footer-desc { max-width: 100%; }
+            .footer-copy { font-size: 0.72rem; }
+            .footer-verse { font-size: 0.72rem; }
+
+            .papel-divider { height: 50px; }
+
+            .mobile-menu a { font-size: 2rem; }
+            .mobile-menu { gap: 2rem; }
+        }
+
+        @media (max-width: 380px) {
+            .hero-title { font-size: 2.4rem; }
+            .container { padding: 0 1.2rem; }
+            .nav-inner { padding: 0 1rem; }
+            .impact-stats { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+            .stat-number { font-size: 2.2rem; }
+            .stat-label { font-size: 0.72rem; }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .pillar-card:hover { transform: none; box-shadow: 0 4px 30px rgba(30, 27, 24, 0.04); }
+            .p-card:hover { transform: none; }
+            .photo-item:hover img { transform: none; }
+            .photo-caption { opacity: 1; transform: translateY(0); }
+            .btn-fill:hover { transform: none; }
+            .btn-ghost:hover { transform: none; }
+            .donate-main-btn:hover { transform: none; }
+            .nav-cta:hover { transform: none; }
+        }
+
+        /* Language transition */
+        [data-i] { transition: opacity 0.3s; }
+        .switching [data-i] { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- Custom cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-aura" id="cursorAura"></div>
+
+    <!-- Journey progress -->
+    <div class="journey-line" id="journeyLine">
+        <div class="journey-fill" id="journeyFill"></div>
+        <div class="journey-dot" style="top: 0%" data-section="hero"></div>
+        <div class="journey-dot" style="top: 25%" data-section="mission"></div>
+        <div class="journey-dot" style="top: 50%" data-section="project"></div>
+        <div class="journey-dot" style="top: 75%" data-section="about"></div>
+        <div class="journey-dot" style="top: 100%" data-section="donate"></div>
+    </div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="navbar" class="scrolled">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo hoverable">
+                <!-- LOGO: Globe + hands + heart — blue flame/marigold -->
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#64B5F6"/>
+                            <stop offset="100%" stop-color="#D4A540"/>
+                        </linearGradient>
+                        <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#D4A540"/>
+                            <stop offset="100%" stop-color="#64B5F6"/>
+                        </linearGradient>
+                    </defs>
+                    <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                    <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                    <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                    <line x1="26" y1="18" x2="21" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                    <line x1="74" y1="18" x2="79" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                    <circle cx="50" cy="40" r="26" fill="none" stroke="url(#lg1)" stroke-width="2.2"/>
+                    <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity="0.45"/>
+                    <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity="0.45"/>
+                    <path d="M24 40 Q50 50 76 40" fill="none" stroke="url(#lg1)" stroke-width="1" opacity="0.25"/>
+                    <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.7"/>
+                    <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#lg2)" stroke-width="2.8" stroke-linecap="round"/>
+                    <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#lg2)" stroke-width="2.8" stroke-linecap="round"/>
+                    <path d="M14 58 C12 56 13 52 17 53" fill="none" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                    <path d="M86 58 C88 56 87 52 83 53" fill="none" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                </svg>
+                <span class="nav-logo-text">Go Serve Global</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#mission" class="hoverable" data-i="nav_mission">Mission</a></li>
+                <li><a href="#project" class="hoverable" data-i="nav_project">Our Work</a></li>
+                <li><a href="#about" class="hoverable" data-i="nav_about">About</a></li>
+                <li><a href="#donate" class="hoverable" data-i="nav_donate">Donate</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="lang-toggle">
+                    <button class="lang-btn active hoverable" data-lang="en">EN</button>
+                    <button class="lang-btn hoverable" data-lang="es">ES</button>
+                </div>
+                <a href="https://www.gofundme.com/u/leticia-bravo" target="_blank" rel="noopener" class="nav-cta hoverable" data-i="nav_cta">Donate</a>
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#mission" class="mobile-link" data-i="nav_mission">Mission</a>
+        <a href="#project" class="mobile-link" data-i="nav_project">Our Work</a>
+        <a href="#about" class="mobile-link" data-i="nav_about">About</a>
+        <a href="#donate" class="mobile-link" data-i="nav_donate">Donate</a>
+        <a href="https://www.gofundme.com/u/leticia-bravo" target="_blank" rel="noopener" class="mobile-link" style="color: var(--marigold-bright);" data-i="nav_cta">Donate Now</a>
+        <div class="lang-toggle" style="margin-top: 1rem;">
+            <button class="lang-btn active mobile-lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn mobile-lang-btn" data-lang="es">ES</button>
+        </div>
+    </div>
+
+    <!-- ===== HERO — BRIGHT ===== -->
+    <section class="hero grain" id="heroSection">
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="hero-shape shape-1" data-parallax="0.03"></div>
+        <div class="hero-shape shape-2" data-parallax="-0.02"></div>
+        <div class="hero-shape shape-3" data-parallax="0.04"></div>
+
+        <div class="hero-content" data-parallax="-0.01">
+            <div class="hero-logo-mark">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="hlg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#64B5F6"/>
+                            <stop offset="100%" stop-color="#D4A540"/>
+                        </linearGradient>
+                        <linearGradient id="hlg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#D4A540"/>
+                            <stop offset="100%" stop-color="#64B5F6"/>
+                        </linearGradient>
+                    </defs>
+                    <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                    <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                    <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                    <line x1="26" y1="18" x2="21" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                    <line x1="74" y1="18" x2="79" y2="14" stroke="#E8BD5C" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                    <circle cx="50" cy="40" r="26" fill="none" stroke="url(#hlg1)" stroke-width="1.8"/>
+                    <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#hlg1)" stroke-width="1" opacity="0.4"/>
+                    <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#hlg1)" stroke-width="1" opacity="0.4"/>
+                    <path d="M24 40 Q50 50 76 40" fill="none" stroke="url(#hlg1)" stroke-width="0.8" opacity="0.2"/>
+                    <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.65"/>
+                    <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#hlg2)" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#hlg2)" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M14 58 C12 56 13 52 17 53" fill="none" stroke="url(#hlg2)" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+                    <path d="M86 58 C88 56 87 52 83 53" fill="none" stroke="url(#hlg2)" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+                </svg>
+            </div>
+
+            <h1 class="hero-title" id="heroTitle">
+                <span class="line" id="line1"></span>
+                <span class="line" id="line2"></span>
+            </h1>
+
+            <p class="hero-subtitle" data-i="hero_sub">A life devoted to faith, love &amp; hope</p>
+
+            <div class="hero-ctas">
+                <div class="btn-magnetic hoverable" data-magnetic>
+                    <a href="https://www.gofundme.com/u/leticia-bravo" target="_blank" rel="noopener" class="btn-fill" data-i="hero_cta1">Support Our Mission</a>
+                </div>
+                <div class="btn-magnetic hoverable" data-magnetic>
+                    <a href="#mission" class="btn-ghost" data-i="hero_cta2">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-hint">
+            <div class="scroll-mouse"></div>
+            <span data-i="scroll">Scroll</span>
+        </div>
+    </section>
+
+    <!-- Papel picado divider -->
+    <div class="papel-divider" style="background: var(--cream);">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0 80 C180 20 360 60 540 25 C720 -10 900 50 1080 20 C1260 -10 1380 40 1440 30 L1440 80 Z" fill="var(--bone)" opacity="0.5"/>
+            <path d="M0 80 C240 30 480 65 720 35 C960 5 1200 55 1440 40 L1440 80 Z" fill="var(--bone)"/>
+        </svg>
+    </div>
+
+    <!-- ===== MISSION ===== -->
+    <section class="mission" id="mission">
+        <div class="container">
+            <div class="mission-layout">
+                <div class="mission-text">
+                    <div class="eyebrow reveal" data-i="m_eye">Our Mission</div>
+                    <h2 class="section-heading reveal stagger-1" data-i="m_heading">Bringing hope<br>to the world</h2>
+                    <p class="section-body reveal stagger-2" data-i="m_body">Go Serve Global is a faith-based non-profit dedicated to transforming communities across the globe. Through the love of Yeshua (Jesus Christ), we build schools, support pastoral homes, and bring lasting change to those who need it most.</p>
+                </div>
+
+                <div class="pillars">
+                    <div class="pillar-card reveal stagger-1" data-tilt>
+                        <div class="pillar-num">01</div>
+                        <div>
+                            <h3 data-i="p1_title">Faith</h3>
+                            <p data-i="p1_text">Rooted in the love of Yeshua (Jesus Christ), our work is guided by an unwavering faith that moves mountains and transforms lives across every border.</p>
+                        </div>
+                    </div>
+                    <div class="pillar-card reveal stagger-2" data-tilt>
+                        <div class="pillar-num">02</div>
+                        <div>
+                            <h3 data-i="p2_title">Love</h3>
+                            <p data-i="p2_text">Every act of service flows from a heart of love. We believe that compassion without borders is the most powerful force for change.</p>
+                        </div>
+                    </div>
+                    <div class="pillar-card reveal stagger-3" data-tilt>
+                        <div class="pillar-num">03</div>
+                        <div>
+                            <h3 data-i="p3_title">Hope</h3>
+                            <p data-i="p3_text">Where there is darkness, we bring light. Through education, shelter, and community, we plant seeds of hope that bloom into futures full of promise.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider to teal -->
+    <div class="papel-divider" style="background: var(--bone);">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0 0 C360 70 720 10 1080 60 C1260 80 1380 30 1440 50 L1440 80 L0 80 Z" fill="var(--teal)"/>
+        </svg>
+    </div>
+
+    <!-- ===== PROJECT ===== -->
+    <section class="project grain" id="project">
+        <div class="container" style="position:relative;z-index:2;">
+            <div class="project-layout">
+                <div>
+                    <div class="eyebrow reveal" data-i="pr_eye">Current Project</div>
+                    <h2 class="section-heading reveal stagger-1" data-i="pr_heading">Building Hope in Kakamega, Kenya</h2>
+                    <p class="section-body reveal stagger-2" data-i="pr_body">In the heart of western Kenya, we are building a school and a pastoral home to serve the community of Kakamega. This project will provide education for children, training for local pastors, and a beacon of hope for the entire region.</p>
+
+                    <div class="project-cards">
+                        <div class="p-card reveal stagger-1" data-tilt>
+                            <div class="p-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                </svg>
+                            </div>
+                            <h4 data-i="c1_title">School</h4>
+                            <p data-i="c1_text">A safe, nurturing place for children to learn and grow</p>
+                        </div>
+                        <div class="p-card reveal stagger-2" data-tilt>
+                            <div class="p-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </div>
+                            <h4 data-i="c2_title">Pastoral Home</h4>
+                            <p data-i="c2_text">Training and equipping local pastors serving the community</p>
+                        </div>
+                        <div class="p-card reveal stagger-3" data-tilt>
+                            <div class="p-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <h4 data-i="c3_title">Community</h4>
+                            <p data-i="c3_text">Empowering families and building stronger connections</p>
+                        </div>
+                        <div class="p-card reveal stagger-4" data-tilt>
+                            <div class="p-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </div>
+                            <h4 data-i="c4_title">Global Reach</h4>
+                            <p data-i="c4_text">Connecting hearts worldwide in a shared mission of love</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="photo-gallery reveal-right">
+                    <div class="photo-item photo-hero" data-tilt>
+                        <img src="images/kakamega-group-1.jpg" alt="Students and teachers in Kakamega, Kenya" loading="lazy">
+                        <div class="photo-caption" data-i="photo1_cap">Students and teachers at the school in Kakamega</div>
+                    </div>
+                    <div class="photo-item photo-half reveal stagger-2" data-tilt>
+                        <img src="images/kakamega-kids-waving.jpg" alt="Children waving in Kakamega" loading="lazy">
+                        <div class="photo-caption" data-i="photo2_cap">Children waving hello from the community</div>
+                    </div>
+                    <div class="photo-item photo-half reveal stagger-3" data-tilt>
+                        <img src="images/kakamega-classroom.jpg" alt="Children learning in the classroom" loading="lazy">
+                        <div class="photo-caption" data-i="photo3_cap">Learning in the classroom — building futures</div>
+                    </div>
+                    <div class="gallery-label" data-i="gallery_label">Kakamega, Kenya</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider to light -->
+    <div class="papel-divider" style="background: var(--teal);">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0 80 C320 20 640 60 960 30 C1100 15 1300 50 1440 35 L1440 80 Z" fill="var(--bone)"/>
+        </svg>
+    </div>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-header">
+                <div class="eyebrow reveal" data-i="a_eye">Meet Our Founder</div>
+                <h2 class="section-heading reveal stagger-1" data-i="a_heading">Leticia Bravo</h2>
+            </div>
+
+            <div class="about-layout">
+                <div class="founder-photo-wrap reveal-left">
+                    <div class="founder-photo">
+                        <img src="images/leticia-bravo.jpg" alt="Leticia Bravo, Founder of Go Serve Global" loading="lazy">
+                    </div>
+                    <div class="impact-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" data-i="stat1_num">30+</div>
+                            <div class="stat-label" data-i="stat1_label">Years of Service</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-i="stat2_num">3+</div>
+                            <div class="stat-label" data-i="stat2_label">Countries Served</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-i="stat3_num">&infin;</div>
+                            <div class="stat-label" data-i="stat3_label">Lives Touched</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-body-wrap">
+                    <p class="about-body reveal stagger-2" data-i="a_body1">Leticia lives in California and has dedicated her life to serving others, both as a missionary and as a Certified Nurse Assistant for over 30 years. Caring for people, whether through physical healing or spiritual support, has always been her calling.</p>
+
+                    <p class="about-body reveal stagger-3" data-i="a_body2">Over the years, she has participated in numerous mission trips. She has supported the Hope Rehabilitation Center (Centro de Rehabilitaci&oacute;n La Esperanza) in Tijuana, Mexico, providing essential items for men and women in recovery. She has also traveled to Cuba to bring gifts and basic necessities to children in need, and has contributed donations to churches wherever possible, striving to share love and hope at every turn.</p>
+
+                    <p class="about-body reveal stagger-4" data-i="a_body3">Recently, due to an injury, Leticia has been unable to work, making it difficult to contribute financially to the mission work so close to her heart. Despite this setback, she still feels deeply called to continue serving, because the need has never been greater.</p>
+
+                    <p class="about-text-2 reveal stagger-4" data-i="a_body4">That calling led her to found Go Serve Global, a non-profit organization dedicated to bringing hope, healing, and resources to communities in need around the world.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider to donate -->
+    <div class="papel-divider" style="background: var(--bone);">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+            <path d="M0 0 C240 70 480 20 720 55 C960 90 1200 30 1440 60 L1440 80 L0 80 Z" fill="var(--sand)" opacity="0.5"/>
+            <path d="M0 10 C360 75 720 15 1080 65 C1260 80 1380 40 1440 55 L1440 80 L0 80 Z" fill="var(--sand)"/>
+        </svg>
+    </div>
+
+    <!-- ===== DONATE ===== -->
+    <section class="donate grain" id="donate">
+        <div class="donate-bg"></div>
+        <div class="container donate-content">
+            <div class="eyebrow reveal" data-i="d_eye">Make a Difference</div>
+            <h2 class="section-heading reveal stagger-1" data-i="d_heading">Join us in building hope,<br>one life at a time</h2>
+            <p class="section-body reveal stagger-2" data-i="d_body">Your generosity helps us build schools, support pastors, and create lasting change in communities that need it most.</p>
+
+            <div class="btn-magnetic hoverable reveal stagger-3" data-magnetic style="display:inline-block;">
+                <a href="https://www.gofundme.com/u/leticia-bravo" target="_blank" rel="noopener" class="donate-main-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    <span data-i="d_btn">Donate on GoFundMe</span>
+                </a>
+            </div>
+
+            <p class="donate-note reveal stagger-4" data-i="d_note">100% of donations go directly to our projects</p>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo hoverable">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+                            <defs>
+                                <linearGradient id="flg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#64B5F6"/><stop offset="100%" stop-color="#D4A540"/>
+                                </linearGradient>
+                                <linearGradient id="flg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#D4A540"/><stop offset="100%" stop-color="#64B5F6"/>
+                                </linearGradient>
+                            </defs>
+                            <line x1="50" y1="7" x2="50" y2="1" stroke="#D4A540" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+                            <line x1="37" y1="10" x2="33" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                            <line x1="63" y1="10" x2="67" y2="4" stroke="#E8BD5C" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                            <circle cx="50" cy="40" r="26" fill="none" stroke="url(#flg1)" stroke-width="2.2"/>
+                            <ellipse cx="50" cy="40" rx="13" ry="26" fill="none" stroke="url(#flg1)" stroke-width="1.2" opacity="0.45"/>
+                            <path d="M24 40 Q50 30 76 40" fill="none" stroke="url(#flg1)" stroke-width="1.2" opacity="0.45"/>
+                            <path d="M50 36 C50 33 45 30 45 34 C45 38 50 42 50 42 C50 42 55 38 55 34 C55 30 50 33 50 36Z" fill="#64B5F6" opacity="0.65"/>
+                            <path d="M14 58 C14 58 20 54 26 58 C32 62 38 72 50 74" fill="none" stroke="url(#flg2)" stroke-width="2.8" stroke-linecap="round"/>
+                            <path d="M86 58 C86 58 80 54 74 58 C68 62 62 72 50 74" fill="none" stroke="url(#flg2)" stroke-width="2.8" stroke-linecap="round"/>
+                        </svg>
+                        <span class="nav-logo-text">Go Serve Global</span>
+                    </a>
+                    <p class="footer-desc" data-i="f_desc">A faith-based non-profit devoted to transforming communities through the boundless power of love.</p>
+                </div>
+                <div>
+                    <h4 class="footer-col-title" data-i="f_nav">Navigate</h4>
+                    <ul class="footer-links">
+                        <li><a href="#mission" class="hoverable" data-i="nav_mission">Mission</a></li>
+                        <li><a href="#project" class="hoverable" data-i="nav_project">Our Work</a></li>
+                        <li><a href="#about" class="hoverable" data-i="nav_about">About</a></li>
+                        <li><a href="#donate" class="hoverable" data-i="nav_donate">Donate</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-col-title" data-i="f_connect">Connect</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://www.gofundme.com/u/leticia-bravo" target="_blank" rel="noopener" class="hoverable">GoFundMe</a></li>
+                        <li><a href="mailto:goserveglobal@gmail.com" class="hoverable">goserveglobal@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Go Serve Global. <span data-i="f_rights">All rights reserved.</span></p>
+                <p class="footer-verse" data-i="f_verse">"For I was hungry and you gave me something to eat, I was thirsty and you gave me something to drink, I was a stranger and you invited me in." — Matthew 25:35</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // =========================================================
+    //  TRANSLATIONS
+    // =========================================================
+    const T = {
+        en: {
+            nav_mission:"Mission", nav_project:"Our Work", nav_about:"About", nav_donate:"Donate", nav_cta:"Donate",
+            hero_line1:"Go Serve", hero_line2:"Global",
+            hero_sub:"A life devoted to faith, love & hope",
+            hero_cta1:"Support Our Mission", hero_cta2:"Learn More", scroll:"Scroll",
+            m_eye:"Our Mission", m_heading:"Bringing hope<br>to the world",
+            m_body:"Go Serve Global is a faith-based non-profit dedicated to transforming communities across the globe. Through the love of Yeshua (Jesus Christ), we build schools, support pastoral homes, and bring lasting change to those who need it most.",
+            p1_title:"Faith", p1_text:"Rooted in the love of Yeshua (Jesus Christ), our work is guided by an unwavering faith that moves mountains and transforms lives across every border.",
+            p2_title:"Love", p2_text:"Every act of service flows from a heart of love. We believe that compassion without borders is the most powerful force for change.",
+            p3_title:"Hope", p3_text:"Where there is darkness, we bring light. Through education, shelter, and community, we plant seeds of hope that bloom into futures full of promise.",
+            pr_eye:"Current Project", pr_heading:"Building Hope in<br>Kakamega, Kenya",
+            pr_body:"In the heart of western Kenya, we are building a school and a pastoral home to serve the community of Kakamega. This project will provide education for children, training for local pastors, and a beacon of hope for the entire region.",
+            c1_title:"School", c1_text:"A safe, nurturing place for children to learn and grow",
+            c2_title:"Pastoral Home", c2_text:"Training and equipping local pastors serving the community",
+            c3_title:"Community", c3_text:"Empowering families and building stronger connections",
+            c4_title:"Global Reach", c4_text:"Connecting hearts worldwide in a shared mission of love",
+            photo1_cap:"Students and teachers at the school in Kakamega",
+            photo2_cap:"Children waving hello from the community",
+            photo3_cap:"Learning in the classroom \u2014 building futures",
+            gallery_label:"Kakamega, Kenya",
+            a_eye:"Meet Our Founder", a_heading:"Leticia Bravo",
+            stat1_num:"30+", stat1_label:"Years of Service",
+            stat2_num:"3+", stat2_label:"Countries Served",
+            stat3_num:"\u221E", stat3_label:"Lives Touched",
+            a_body1:"Leticia lives in California and has dedicated her life to serving others, both as a missionary and as a Certified Nurse Assistant for over 30 years. Caring for people, whether through physical healing or spiritual support, has always been her calling.",
+            a_body2:"Over the years, she has participated in numerous mission trips. She has supported the Hope Rehabilitation Center (Centro de Rehabilitaci\u00f3n La Esperanza) in Tijuana, Mexico, providing essential items for men and women in recovery. She has also traveled to Cuba to bring gifts and basic necessities to children in need, and has contributed donations to churches wherever possible, striving to share love and hope at every turn.",
+            a_body3:"Recently, due to an injury, Leticia has been unable to work, making it difficult to contribute financially to the mission work so close to her heart. Despite this setback, she still feels deeply called to continue serving, because the need has never been greater.",
+            a_body4:"That calling led her to found Go Serve Global, a non-profit organization dedicated to bringing hope, healing, and resources to communities in need around the world.",
+            d_eye:"Make a Difference", d_heading:"Join us in building hope,<br>one life at a time",
+            d_body:"Your generosity helps us build schools, support pastors, and create lasting change in communities that need it most.",
+            d_btn:"Donate on GoFundMe", d_note:"100% of donations go directly to our projects",
+            f_desc:"A faith-based non-profit devoted to transforming communities through the boundless power of love.",
+            f_nav:"Navigate", f_connect:"Connect", f_rights:"All rights reserved.",
+            f_verse:"\u201CFor I was hungry and you gave me something to eat, I was thirsty and you gave me something to drink, I was a stranger and you invited me in.\u201D \u2014 Matthew 25:35"
+        },
+        es: {
+            nav_mission:"Misi\u00f3n", nav_project:"Nuestro Trabajo", nav_about:"Acerca de", nav_donate:"Donar", nav_cta:"Donar",
+            hero_line1:"Go Serve", hero_line2:"Global",
+            hero_sub:"Una vida dedicada a la fe, el amor y la esperanza",
+            hero_cta1:"Apoya Nuestra Misi\u00f3n", hero_cta2:"Conoce M\u00e1s", scroll:"Despl\u00e1zate",
+            m_eye:"Nuestra Misi\u00f3n", m_heading:"Llevando esperanza<br>al mundo",
+            m_body:"Go Serve Global es una organizaci\u00f3n sin fines de lucro basada en la fe, dedicada a transformar comunidades en todo el mundo. A trav\u00e9s del amor de Yeshua (Jesucristo), construimos escuelas, apoyamos hogares pastorales y generamos cambios duraderos.",
+            p1_title:"Fe", p1_text:"Arraigados en el amor de Yeshua (Jesucristo), nuestro trabajo est\u00e1 guiado por una fe inquebrantable que mueve monta\u00f1as y transforma vidas.",
+            p2_title:"Amor", p2_text:"Cada acto de servicio nace de un coraz\u00f3n lleno de amor. La compasi\u00f3n sin fronteras es la fuerza m\u00e1s poderosa para el cambio.",
+            p3_title:"Esperanza", p3_text:"Donde hay oscuridad, llevamos luz. A trav\u00e9s de la educaci\u00f3n, el refugio y la comunidad, plantamos semillas de esperanza.",
+            pr_eye:"Proyecto Actual", pr_heading:"Construyendo Esperanza en<br>Kakamega, Kenia",
+            pr_body:"En el coraz\u00f3n del oeste de Kenia, estamos construyendo una escuela y un hogar pastoral para servir a la comunidad de Kakamega. Este proyecto brindar\u00e1 educaci\u00f3n, capacitaci\u00f3n y esperanza.",
+            c1_title:"Escuela", c1_text:"Un lugar seguro y acogedor para que los ni\u00f1os aprendan y crezcan",
+            c2_title:"Hogar Pastoral", c2_text:"Capacitando y equipando a los pastores locales de la comunidad",
+            c3_title:"Comunidad", c3_text:"Empoderando familias y construyendo conexiones m\u00e1s fuertes",
+            c4_title:"Alcance Global", c4_text:"Conectando corazones en todo el mundo en una misi\u00f3n de amor",
+            photo1_cap:"Estudiantes y maestros en la escuela de Kakamega",
+            photo2_cap:"Ni\u00f1os saludando desde la comunidad",
+            photo3_cap:"Aprendiendo en el aula \u2014 construyendo futuros",
+            gallery_label:"Kakamega, Kenia",
+            a_eye:"Conoce a Nuestra Fundadora", a_heading:"Leticia Bravo",
+            stat1_num:"30+", stat1_label:"A\u00f1os de Servicio",
+            stat2_num:"3+", stat2_label:"Pa\u00edses Servidos",
+            stat3_num:"\u221E", stat3_label:"Vidas Tocadas",
+            a_body1:"Leticia vive en California y ha dedicado su vida a servir a los dem\u00e1s, tanto como misionera como Asistente de Enfermer\u00eda Certificada por m\u00e1s de 30 a\u00f1os. Cuidar a las personas, ya sea a trav\u00e9s de la sanaci\u00f3n f\u00edsica o el apoyo espiritual, siempre ha sido su vocaci\u00f3n.",
+            a_body2:"A lo largo de los a\u00f1os, ha participado en numerosos viajes misioneros. Ha apoyado al Centro de Rehabilitaci\u00f3n La Esperanza en Tijuana, M\u00e9xico, proporcionando art\u00edculos esenciales para hombres y mujeres en recuperaci\u00f3n. Tambi\u00e9n ha viajado a Cuba para llevar regalos y art\u00edculos de primera necesidad a ni\u00f1os necesitados, y ha contribuido con donaciones a iglesias siempre que ha podido, esforzándose por compartir amor y esperanza.",
+            a_body3:"Recientemente, debido a una lesi\u00f3n, Leticia no ha podido trabajar, lo que ha dificultado contribuir econ\u00f3micamente al trabajo misionero tan cercano a su coraz\u00f3n. A pesar de este contratiempo, todav\u00eda siente un llamado profundo a seguir sirviendo, porque la necesidad nunca ha sido mayor.",
+            a_body4:"Ese llamado la llev\u00f3 a fundar Go Serve Global, una organizaci\u00f3n sin fines de lucro dedicada a llevar esperanza, sanaci\u00f3n y recursos a comunidades necesitadas en todo el mundo.",
+            d_eye:"Haz la Diferencia", d_heading:"\u00danete a nosotros construyendo<br>esperanza, una vida a la vez",
+            d_body:"Tu generosidad nos ayuda a construir escuelas, apoyar pastores y crear cambios duraderos en las comunidades que m\u00e1s lo necesitan.",
+            d_btn:"Donar en GoFundMe", d_note:"El 100% de las donaciones van directamente a nuestros proyectos",
+            f_desc:"Una organizaci\u00f3n basada en la fe, dedicada a transformar comunidades a trav\u00e9s del poder infinito del amor.",
+            f_nav:"Navegar", f_connect:"Conectar", f_rights:"Todos los derechos reservados.",
+            f_verse:"\u201CPorque tuve hambre y me dieron de comer, tuve sed y me dieron de beber, fui forastero y me acogieron.\u201D \u2014 Mateo 25:35"
+        }
+    };
+
+    let lang = 'en';
+
+    function setLang(l) {
+        if (l === lang) return;
+        lang = l;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+        document.body.classList.add('switching');
+        setTimeout(() => {
+            document.querySelectorAll('[data-i]').forEach(el => {
+                const k = el.dataset.i;
+                if (T[l][k]) {
+                    if (T[l][k].includes('<br>')) el.innerHTML = T[l][k];
+                    else el.textContent = T[l][k];
+                }
+            });
+            buildHeroText();
+            document.documentElement.lang = l;
+            document.body.classList.remove('switching');
+        }, 300);
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.addEventListener('click', () => {
+            setLang(b.dataset.lang);
+            // Sync all lang-btn states (nav + mobile menu)
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === b.dataset.lang));
+        });
+    });
+
+    // =========================================================
+    //  KINETIC HERO TEXT
+    // =========================================================
+    function buildHeroText() {
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const t1 = T[lang].hero_line1;
+        const t2 = T[lang].hero_line2;
+        let delay = 0.4;
+
+        line1.innerHTML = '';
+        line2.innerHTML = '';
+
+        t1.split('').forEach((ch, i) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            span.style.animationDelay = delay + i * 0.04 + 's';
+            line1.appendChild(span);
+        });
+
+        delay += t1.length * 0.04 + 0.15;
+        t2.split('').forEach((ch, i) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            span.style.animationDelay = delay + i * 0.04 + 's';
+            line2.appendChild(span);
+        });
+    }
+
+    buildHeroText();
+
+    // =========================================================
+    //  CUSTOM CURSOR
+    // =========================================================
+    const cursor = document.getElementById('cursor');
+    const aura = document.getElementById('cursorAura');
+    let mx = 0, my = 0, cx = 0, cy = 0, ax = 0, ay = 0;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    function animateCursor() {
+        cx += (mx - cx) * 0.2;
+        cy += (my - cy) * 0.2;
+        ax += (mx - ax) * 0.08;
+        ay += (my - ay) * 0.08;
+        cursor.style.left = cx + 'px';
+        cursor.style.top = cy + 'px';
+        aura.style.left = ax + 'px';
+        aura.style.top = ay + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('.hoverable, a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // =========================================================
+    //  HERO PARALLAX (mouse-driven)
+    // =========================================================
+    const heroBg = document.getElementById('heroBg');
+    const parallaxEls = document.querySelectorAll('[data-parallax]');
+
+    document.addEventListener('mousemove', e => {
+        const rx = (e.clientX / window.innerWidth - 0.5) * 2;
+        const ry = (e.clientY / window.innerHeight - 0.5) * 2;
+
+        heroBg.style.transform = `translate(${rx * 15}px, ${ry * 10}px)`;
+
+        parallaxEls.forEach(el => {
+            const f = parseFloat(el.dataset.parallax);
+            el.style.transform = `translate(${rx * f * 400}px, ${ry * f * 300}px)`;
+        });
+    });
+
+    // =========================================================
+    //  3D TILT CARDS
+    // =========================================================
+    document.querySelectorAll('[data-tilt]').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(800px) rotateY(0) rotateX(0) scale(1)';
+            card.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)';
+            setTimeout(() => card.style.transition = '', 500);
+        });
+        card.addEventListener('mouseenter', () => { card.style.transition = 'none'; });
+    });
+
+    // =========================================================
+    //  MAGNETIC BUTTONS
+    // =========================================================
+    document.querySelectorAll('[data-magnetic]').forEach(wrap => {
+        const btn = wrap.querySelector('a') || wrap;
+        wrap.addEventListener('mousemove', e => {
+            const r = wrap.getBoundingClientRect();
+            const x = e.clientX - r.left - r.width / 2;
+            const y = e.clientY - r.top - r.height / 2;
+            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
+        wrap.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+            btn.style.transition = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+            setTimeout(() => btn.style.transition = 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)', 400);
+        });
+        wrap.addEventListener('mouseenter', () => { btn.style.transition = 'transform 0.1s'; });
+    });
+
+    // =========================================================
+    //  SCROLL REVEALS
+    // =========================================================
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+    // =========================================================
+    //  NAV SCROLL + JOURNEY LINE
+    // =========================================================
+    const navbar = document.getElementById('navbar');
+    const journeyFill = document.getElementById('journeyFill');
+    const journeyDots = document.querySelectorAll('.journey-dot');
+    const sections = ['heroSection','mission','project','about','donate'];
+
+    function onScroll() {
+        const sy = window.scrollY;
+        navbar.classList.toggle('scrolled', sy > 60);
+
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = Math.min(sy / docH * 100, 100);
+        if (journeyFill) journeyFill.style.height = pct + '%';
+
+        sections.forEach((id, i) => {
+            const sec = document.getElementById(id);
+            if (!sec) return;
+            const top = sec.offsetTop - window.innerHeight * 0.5;
+            if (journeyDots[i]) {
+                journeyDots[i].classList.toggle('active', sy >= top);
+            }
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // =========================================================
+    //  MOBILE MENU
+    // =========================================================
+    document.getElementById('hamburger').addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.toggle('open');
+    });
+    document.querySelectorAll('.mobile-link').forEach(a => {
+        a.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+    });
+
+    // =========================================================
+    //  SMOOTH SCROLL
+    // =========================================================
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const t = document.querySelector(a.getAttribute('href'));
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    </script>
+</body>
+</html>
